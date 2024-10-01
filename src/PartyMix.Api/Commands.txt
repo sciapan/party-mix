@@ -1,0 +1,11 @@
+﻿1. Create new migration
+
+dotnet ef migrations add InitMigration --project PartyMix.Migrations/PartyMix.Migrations.csproj --startup-project PartyMix.Api/PartyMix.Api.csproj
+
+2. Update database
+
+dotnet ef database update --project PartyMix.Migrations/PartyMix.Migrations.csproj --startup-project PartyMix.Api/PartyMix.Api.csproj
+
+3. Remove migration
+
+dotnet ef migrations remove --project PartyMix.Migrations/PartyMix.Migrations.csproj --startup-project PartyMix.Api/PartyMix.Api.csproj
