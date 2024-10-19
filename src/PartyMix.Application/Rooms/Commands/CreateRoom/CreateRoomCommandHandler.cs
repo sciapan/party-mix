@@ -1,10 +1,9 @@
-using PartyMix.Application.Rooms.Models;
-using PartyMix.Domain;
 using MediatR;
+using PartyMix.Application.Rooms.Models;
 using PartyMix.Application.Security;
 using PartyMix.Persistence;
 
-namespace PartyMix.Application.Rooms.Commands;
+namespace PartyMix.Application.Rooms.Commands.CreateRoom;
 
 public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, RoomVm>
 {

@@ -11,8 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PartyMix.Contracts\PartyMix.Contracts.csproj" />
     <ProjectReference Include="..\PartyMix.Domain\PartyMix.Domain.csproj" />
     <ProjectReference Include="..\PartyMix.Persistence\PartyMix.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Rooms\Models\" />
   </ItemGroup>
 
 </Project>

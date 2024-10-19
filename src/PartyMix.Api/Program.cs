@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using PartyMix.Application.Rooms.Commands;
+using PartyMix.Application.Rooms.Commands.CreateRoom;
 using PartyMix.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);

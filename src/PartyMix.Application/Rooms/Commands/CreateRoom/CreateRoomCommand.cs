@@ -1,7 +1,7 @@
 using MediatR;
 using PartyMix.Application.Rooms.Models;
 
-namespace PartyMix.Application.Rooms.Commands;
+namespace PartyMix.Application.Rooms.Commands.CreateRoom;
 
 /// <summary>
 /// Command to create a new room.

@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using PartyMix.Application.Rooms.Models
 @inject IHttpClientFactory HttpClientFactory;
 @rendermode InteractiveServer
 
@@ -21,10 +22,16 @@ To create new room set title and password:
 <div>
     <button @onclick="CreateRoomAsync" type="button">Create</button>
 </div>
+@if (_roomLink != string.Empty) {
+    <div>
+        <a id="room-link" name="room-link" href="@_roomLink">@_roomLink</a>
+    </div>
+}
 
 @code {
     private string _name = string.Empty;
     private string _password = string.Empty;
+    private string _roomLink = string.Empty;
 
     private async Task CreateRoomAsync()
     {
@@ -32,6 +39,8 @@ To create new room set title and password:
         var response = await client.PostAsJsonAsync("/rooms", new { Name = _name, Password = _password });
         if (response.IsSuccessStatusCode)
         {
+            var roomVm = await response.Content.ReadFromJsonAsync<RoomVm>();
+            _roomLink = roomVm!.Link;
         }
     }
 }

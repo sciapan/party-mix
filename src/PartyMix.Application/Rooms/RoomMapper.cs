@@ -1,6 +1,6 @@
 using PartyMix.Application.Rooms.Models;
 using PartyMix.Domain;
-using PartyMix.Application.Rooms.Commands;
+using PartyMix.Application.Rooms.Commands.CreateRoom;
 namespace PartyMix.Application.Rooms;
 
 public static class RoomMapper
@@ -12,6 +12,6 @@ public static class RoomMapper
 
     public static RoomVm ToVm(this Room room)
     {
-        return new RoomVm { Id = room.Id, Name = room.Name };
+        return new RoomVm { Id = room.Id.ToString(), Name = room.Name, Link = $"https://party.mix/{room.Id}" };
     }
 }
