@@ -1,0 +1,30 @@
+﻿@page "/Room/{roomId}"
+@using PartyMix.Application.Rooms.Models
+@inject IHttpClientFactory HttpClientFactory;
+
+<PageTitle>Room</PageTitle>
+
+<h2>@_room?.Name</h2>
+
+@code {
+    [Parameter]
+    public string RoomId { get; set; }
+
+    private RoomVm? _room { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        using var client = HttpClientFactory.CreateClient("apiClient");
+        var response = await client.GetAsync($"/rooms/{RoomId}");
+        if (response.IsSuccessStatusCode)
+        {
+            _room = await response.Content.ReadFromJsonAsync<RoomVm>();
+        }
+        else
+        {
+            // TODO add handling            
+        }
+        
+        await base.OnInitializedAsync();
+    }
+}

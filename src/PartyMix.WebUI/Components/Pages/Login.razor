@@ -1,5 +1,6 @@
 ﻿@page "/Login"
 @inject IHttpClientFactory HttpClientFactory;
+@inject NavigationManager Navigation
 @rendermode InteractiveServer
 
 <PageTitle>Login</PageTitle>
@@ -54,7 +55,11 @@
         var response = await client.PostAsJsonAsync("/login", new { Id = RoomId, Password = _password });
         if (response.IsSuccessStatusCode)
         {
-            // navigate to the room
+            Navigation.NavigateTo($"/Room/{RoomId}");
+        }
+        else
+        {
+            // TODO add handling
         }
     }
 }
