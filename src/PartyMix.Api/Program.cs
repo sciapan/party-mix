@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartyMix.Application.Rooms.Commands.CreateRoom;
 using PartyMix.Application.Rooms.Commands.EnterRoom;
+using PartyMix.Application.Rooms.Queries.GetRoom;
 using PartyMix.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapGet("/rooms/{id}", async (string id, IMediator mediator, CancellationToken cancellationToken) =>
+{
+    var result = await mediator.Send(new GetRoomQuery { Id = id }, cancellationToken);
+    return result.Match(
+        Results.Ok,
+        _ => Results.NotFound());
+});
+
 app.MapPost("/rooms",
         (CreateRoomCommand command, IMediator mediator, CancellationToken cancellationToken) =>
             mediator.Send(command, cancellationToken))
@@ -51,12 +60,10 @@ app.MapPost("/rooms",
 app.MapPost("/login", async (EnterRoomCommand command, IMediator mediator, CancellationToken cancellationToken) =>
     {
         var result = await mediator.Send(command, cancellationToken);
-        var response = result.Match(
+        return result.Match(
             _ => Results.NoContent(),
             _ => Results.NotFound(),
             _ => Results.Unauthorized());
-
-        return response;
     })
     .WithName("EnterRoom")
     .WithOpenApi();
