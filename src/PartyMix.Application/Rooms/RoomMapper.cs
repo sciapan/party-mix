@@ -1,5 +1,5 @@
-using PartyMix.Application.Rooms.Models;
 using PartyMix.Application.Rooms.Commands.CreateRoom;
+using PartyMix.Contracts;
 using PartyMix.Domain.Entities;
 
 namespace PartyMix.Application.Rooms;

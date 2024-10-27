@@ -1,10 +1,22 @@
-namespace PartyMix.Application.Rooms.Models;
+namespace PartyMix.Contracts;
 
-public class RoomVm
+/// <summary>
+/// VM of room entity.
+/// </summary>
+public record RoomVm
 {
-    public string Id { get; set; }
+    /// <summary>
+    /// Id. Unique identifier.
+    /// </summary>
+    public string Id { get; init; }
 
-    public string Name { get; set; }
+    /// <summary>
+    /// Room name.
+    /// </summary>
+    public string Name { get; init; }
 
-    public string Link { get; set; }
+    /// <summary>
+    /// Room link.
+    /// </summary>
+    public string Link { get; init; }
 }

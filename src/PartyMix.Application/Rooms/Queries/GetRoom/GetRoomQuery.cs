@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using OneOf;
 using OneOf.Types;
-using PartyMix.Application.Rooms.Models;
+using PartyMix.Contracts;
 
 namespace PartyMix.Application.Rooms.Queries.GetRoom;
 

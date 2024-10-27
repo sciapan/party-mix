@@ -1,6 +1,6 @@
 using MediatR;
-using PartyMix.Application.Rooms.Models;
 using PartyMix.Application.Security;
+using PartyMix.Contracts;
 using PartyMix.Persistence;
 
 namespace PartyMix.Application.Rooms.Commands.CreateRoom;

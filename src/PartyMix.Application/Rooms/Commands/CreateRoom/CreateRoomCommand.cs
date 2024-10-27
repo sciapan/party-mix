@@ -1,5 +1,5 @@
 using MediatR;
-using PartyMix.Application.Rooms.Models;
+using PartyMix.Contracts;
 
 namespace PartyMix.Application.Rooms.Commands.CreateRoom;
 
