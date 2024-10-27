@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 using PartyMix.Contracts;
@@ -40,6 +41,12 @@ public class CreatePlaylistEntryCommandHandler : IRequestHandler<CreatePlaylistE
     /// <returns><see cref="Task{TResult}"/></returns>
     public async Task<OneOf<PlaylistEntryVm, NotFound>> Handle(CreatePlaylistEntryCommand request, CancellationToken cancellationToken)
     {
+        var isRoomExists = await _dbContext.Rooms.AnyAsync(x => x.Id == Ulid.Parse(request.RoomId), cancellationToken);
+        if (!isRoomExists)
+        {
+            return new NotFound();
+        }
+        
         var playlistEntry = request.ToPlaylistEntry();
 
         _dbContext.PlaylistEntries.Add(playlistEntry);
