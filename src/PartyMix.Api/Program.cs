@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using PartyMix.Application.PlaylistEntries.Commands.CreatePlaylistEntry;
 using PartyMix.Application.Rooms.Commands.CreateRoom;
 using PartyMix.Application.Rooms.Commands.EnterRoom;
 using PartyMix.Application.Rooms.Queries.GetRoom;
@@ -43,13 +44,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// rooms
 app.MapGet("/rooms/{id}", async (string id, IMediator mediator, CancellationToken cancellationToken) =>
-{
-    var result = await mediator.Send(new GetRoomQuery { Id = id }, cancellationToken);
-    return result.Match(
-        Results.Ok,
-        _ => Results.NotFound());
-});
+    {
+        var result = await mediator.Send(new GetRoomQuery { Id = id }, cancellationToken);
+        return result.Match(
+            Results.Ok,
+            _ => Results.NotFound());
+    })
+    .WithName("GetRoom")
+    .WithOpenApi();
 
 app.MapPost("/rooms",
         (CreateRoomCommand command, IMediator mediator, CancellationToken cancellationToken) =>
@@ -66,6 +70,18 @@ app.MapPost("/login", async (EnterRoomCommand command, IMediator mediator, Cance
             _ => Results.Unauthorized());
     })
     .WithName("EnterRoom")
+    .WithOpenApi();
+
+// playlist entries
+app.MapPost("/playlistEntries",
+        async (CreatePlaylistEntryCommand command, IMediator mediator, CancellationToken cancellationToken) =>
+        {
+            var result = await mediator.Send(command, cancellationToken);
+            return result.Match(
+                Results.Ok,
+                _ => Results.NotFound());
+        })
+    .WithName("CreatePlaylistEntry")
     .WithOpenApi();
 
 app.Run();
