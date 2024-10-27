@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 using PartyMix.Contracts;
@@ -27,7 +28,10 @@ public class GetRoomQueryHandler : IRequestHandler<GetRoomQuery, OneOf<RoomVm, N
 
     public async Task<OneOf<RoomVm, NotFound>> Handle(GetRoomQuery request, CancellationToken cancellationToken)
     {
-        var room = await _dbContext.Rooms.FindAsync(Ulid.Parse(request.Id), cancellationToken);
+        var room = await _dbContext.Rooms
+            .Include(x => x.PlaylistEntries)
+            .FirstOrDefaultAsync(x => x.Id == Ulid.Parse(request.Id), cancellationToken);
+        
         if (room == null)
         {
             return new NotFound();

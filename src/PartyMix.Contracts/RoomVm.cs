@@ -19,4 +19,9 @@ public record RoomVm
     /// Room link.
     /// </summary>
     public string Link { get; init; }
+
+    /// <summary>
+    /// Room playlist.
+    /// </summary>
+    public PlaylistEntryVm[]? Playlist { get; init; }
 }

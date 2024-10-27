@@ -1,3 +1,4 @@
+using PartyMix.Application.PlaylistEntries;
 using PartyMix.Application.Rooms.Commands.CreateRoom;
 using PartyMix.Contracts;
 using PartyMix.Domain.Entities;
@@ -13,6 +14,12 @@ public static class RoomMapper
 
     public static RoomVm ToVm(this Room room)
     {
-        return new RoomVm { Id = room.Id.ToString(), Name = room.Name, Link = $"https://party.mix/{room.Id}" };
+        return new RoomVm
+        {
+            Id = room.Id.ToString(),
+            Name = room.Name,
+            Link = $"https://party.mix/{room.Id}",
+            Playlist = room.PlaylistEntries.Select(x => x.ToVm()).ToArray()
+        };
     }
 }

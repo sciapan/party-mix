@@ -13,7 +13,25 @@
 }
 else
 {
-    <h2>@_room?.Name</h2>
+    <h2>@_room.Name</h2>
+    @if (_room.Playlist != null)
+    {
+        <div class="container">
+            <div class="row">
+                @foreach (var entry in _room.Playlist.OrderBy(x => x.Order))
+                {
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">@entry.Song</h5>
+                                <p class="card-text">@entry.Singer</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 }
 
 @code {
