@@ -1,6 +1,7 @@
 using PartyMix.Application.Rooms.Models;
-using PartyMix.Domain;
 using PartyMix.Application.Rooms.Commands.CreateRoom;
+using PartyMix.Domain.Entities;
+
 namespace PartyMix.Application.Rooms;
 
 public static class RoomMapper

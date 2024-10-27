@@ -2,6 +2,7 @@
 using PartyMix.Domain;
 using PartyMix.Persistence.Converters;
 using System.Reflection;
+using PartyMix.Domain.Entities;
 
 namespace PartyMix.Persistence
 {
@@ -12,6 +13,8 @@ namespace PartyMix.Persistence
         }
 
         public DbSet<Room> Rooms { get; set; }
+        
+        public DbSet<PlaylistEntry> PlaylistEntries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,7 +26,6 @@ namespace PartyMix.Persistence
             configurationBuilder
                 .Properties<Ulid>()
                 .HaveConversion<UlidToStringConverter>();
-            //.HaveConversion<UlidToBytesConverter>();
         }
     }
 }
