@@ -1,10 +1,20 @@
 ﻿@page "/Room/{roomId}"
 @using PartyMix.Application.Rooms.Models
 @inject IHttpClientFactory HttpClientFactory;
+@attribute [StreamRendering]
 
 <PageTitle>Room</PageTitle>
 
-<h2>@_room?.Name</h2>
+@if (_room == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <h2>@_room?.Name</h2>
+}
 
 @code {
     [Parameter]

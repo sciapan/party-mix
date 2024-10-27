@@ -17,8 +17,4 @@
     <ProjectReference Include="..\PartyMix.Persistence\PartyMix.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Rooms\Models\" />
-  </ItemGroup>
-
 </Project>
