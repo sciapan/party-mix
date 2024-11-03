@@ -2,6 +2,7 @@
 @using PartyMix.Contracts
 @inject IHttpClientFactory HttpClientFactory;
 @attribute [StreamRendering]
+@rendermode InteractiveServer
 
 <PageTitle>Room</PageTitle>
 
@@ -13,25 +14,73 @@
 }
 else
 {
-    <h2>@_room.Name</h2>
-    @if (_room.Playlist != null)
-    {
-        <div class="container">
-            <div class="row">
-                @foreach (var entry in _room.Playlist.OrderBy(x => x.Order))
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <h1 class="mb-4">@_room.Name</h1>
+
+                @if (_room.Playlist == null || _room.Playlist.Length == 0)
                 {
-                    <div class="col-md-4">
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title">@entry.Song</h5>
-                                <p class="card-text">@entry.Singer</p>
+                    <div class="alert alert-info">
+                        No songs in the playlist.
+                    </div>
+                }
+                else
+                {
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Artist</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @for (int i = 0; i < _room.Playlist.Length; i++)
+                                {
+                                    var index = i;
+                                    <tr class="@(currentSongIndex == index ? "table-primary" : "")">
+                                        <td>@(index + 1)</td>
+                                        <td>@_room.Playlist[index].Song</td>
+                                        <td>@_room.Playlist[index].Singer</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            @if (currentSongIndex >= 0 && currentSongIndex < _room.Playlist.Length)
+                                            {
+                                                <p class="h5 mb-0">Now Playing: @_room.Playlist[currentSongIndex].Song - @_room.Playlist[currentSongIndex].Singer</p>
+                                            }
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="btn-group">
+                                                <button class="btn btn-outline-primary" @onclick="PlayPrevious" disabled="@(currentSongIndex <= 0)">
+                                                    Previous
+                                                </button>
+                                                <button class="btn btn-primary" @onclick="TogglePlay">
+                                                    @(isPlaying ? "Pause" : "Play")
+                                                </button>
+                                                <button class="btn btn-outline-primary" @onclick="PlayNext" disabled="@(currentSongIndex >= _room.Playlist.Length - 1)">
+                                                    Next
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 }
             </div>
         </div>
-    }
+    </div>
 }
 
 @code {
@@ -39,6 +88,9 @@ else
     public string RoomId { get; set; }
 
     private RoomVm? _room { get; set; }
+    
+    private int currentSongIndex = -1;
+    private bool isPlaying = false;
     
     protected override async Task OnInitializedAsync()
     {
@@ -54,5 +106,36 @@ else
         }
         
         await base.OnInitializedAsync();
+    }
+    
+    private void TogglePlay()
+    {
+        if (currentSongIndex == -1 && _room!.Playlist!.Length == 0)
+        {
+            currentSongIndex = 0;
+        }
+        
+        isPlaying = !isPlaying;
+        // Add actual playback logic here
+    }
+    
+    private void PlayNext()
+    {
+        if (currentSongIndex < _room!.Playlist!.Length - 1)
+        {
+            currentSongIndex++;
+            
+            // Add actual playback logic here
+        }
+    }
+    
+    private void PlayPrevious()
+    {
+        if (currentSongIndex > 0)
+        {
+            currentSongIndex--;
+            
+            // Add actual playback logic here
+        }
     }
 }
