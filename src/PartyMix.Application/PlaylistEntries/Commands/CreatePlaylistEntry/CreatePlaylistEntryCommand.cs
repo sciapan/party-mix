@@ -17,17 +17,7 @@ public class CreatePlaylistEntryCommand : IRequest<OneOf<PlaylistEntryVm, NotFou
     public string RoomId { get; init; }
 
     /// <summary>
-    /// Playlist entry order.
+    /// Search term.
     /// </summary>
-    public int Order { get; init; }
-
-    /// <summary>
-    /// Artist.
-    /// </summary>
-    public string Artist { get; init; }
-
-    /// <summary>
-    /// Song.
-    /// </summary>
-    public string Song { get; init; }
+    public string Search { get; init; }
 }

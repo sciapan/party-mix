@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using OneOf;
 using OneOf.Types;
 using PartyMix.Contracts;
+using PartyMix.Domain.Entities;
 using PartyMix.Persistence;
 
 namespace PartyMix.Application.PlaylistEntries.Commands.CreatePlaylistEntry;
@@ -41,13 +42,29 @@ public class CreatePlaylistEntryCommandHandler : IRequestHandler<CreatePlaylistE
     /// <returns><see cref="Task{TResult}"/></returns>
     public async Task<OneOf<PlaylistEntryVm, NotFound>> Handle(CreatePlaylistEntryCommand request, CancellationToken cancellationToken)
     {
-        var isRoomExists = await _dbContext.Rooms.AnyAsync(x => x.Id == Ulid.Parse(request.RoomId), cancellationToken);
-        if (!isRoomExists)
+        var roomId = Ulid.Parse(request.RoomId);
+        var room = await _dbContext.Rooms
+            .Include(x => x.PlaylistEntries)
+            .FirstOrDefaultAsync(x => x.Id == roomId, cancellationToken);
+
+        if (room == null)
         {
             return new NotFound();
         }
+
+        var playlistEntry = new PlaylistEntry
+        {
+            RoomId = roomId,
+            Order = room.PlaylistEntries.Count, // last by default
+            Artist = "Dummy Artist",
+            Song = "Dummy Song",
+            Url = room.PlaylistEntries.Count % 2 == 0 ? "sample-one.mp3" : "sample-two.mp3"
+        };
+
+        // TODO handle search 
+        // should parse in result - artist / song
         
-        var playlistEntry = request.ToPlaylistEntry();
+        // TODO handle source parsing
 
         _dbContext.PlaylistEntries.Add(playlistEntry);
 
