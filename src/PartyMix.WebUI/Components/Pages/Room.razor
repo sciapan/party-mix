@@ -1,8 +1,10 @@
 ﻿@page "/Room/{roomId}"
+@using System.Globalization
 @using PartyMix.Contracts
 @inject IHttpClientFactory HttpClientFactory;
 @attribute [StreamRendering]
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Room</PageTitle>
 
@@ -44,7 +46,7 @@ else
                                     <tr class="@(currentSongIndex == index ? "table-primary" : "")">
                                         <td>@(index + 1)</td>
                                         <td>@_room.Playlist[index].Song</td>
-                                        <td>@_room.Playlist[index].Singer</td>
+                                        <td>@_room.Playlist[index].Artist</td>
                                     </tr>
                                 }
                                 </tbody>
@@ -56,18 +58,26 @@ else
                                         <div class="col">
                                             @if (currentSongIndex >= 0 && currentSongIndex < _room.Playlist.Length)
                                             {
-                                                <p class="h5 mb-0">Now Playing: @_room.Playlist[currentSongIndex].Song - @_room.Playlist[currentSongIndex].Singer</p>
+                                                <p class="h5 mb-0">Now Playing: @_room.Playlist[currentSongIndex].Song - @_room.Playlist[currentSongIndex].Artist</p>
                                             }
+                                        </div>
+                                        <div class="progress mt-2" style="height: 10px;">
+                                            <div class="progress-bar" role="progressbar"
+                                                 style="width: @progressPercentageFormatted%"
+                                                 aria-valuenow="@progressPercentageFormatted"
+                                                 aria-valuemin="0"
+                                                 aria-valuemax="100">
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <div class="btn-group">
-                                                <button class="btn btn-outline-primary" @onclick="PlayPrevious" disabled="@(currentSongIndex <= 0)">
+                                                <button class="btn btn-outline-primary" @onclick="PlayPreviousAsync" disabled="@(currentSongIndex <= 0)">
                                                     Previous
                                                 </button>
-                                                <button class="btn btn-primary" @onclick="TogglePlay">
+                                                <button class="btn btn-primary" @onclick="TogglePlayAsync">
                                                     @(isPlaying ? "Pause" : "Play")
                                                 </button>
-                                                <button class="btn btn-outline-primary" @onclick="PlayNext" disabled="@(currentSongIndex >= _room.Playlist.Length - 1)">
+                                                <button class="btn btn-outline-primary" @onclick="PlayNextAsync" disabled="@(currentSongIndex >= _room.Playlist.Length - 1)">
                                                     Next
                                                 </button>
                                             </div>
@@ -91,6 +101,9 @@ else
     
     private int currentSongIndex = -1;
     private bool isPlaying = false;
+    private double progressPercentage = 0;
+    private string progressPercentageFormatted = "0";
+    private DotNetObjectReference<Room> objRef;
     
     protected override async Task OnInitializedAsync()
     {
@@ -107,35 +120,99 @@ else
         
         await base.OnInitializedAsync();
     }
-    
-    private void TogglePlay()
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (currentSongIndex == -1 && _room!.Playlist!.Length == 0)
+        if (firstRender)
         {
-            currentSongIndex = 0;
+            objRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("audioPlayer.initialize", objRef);
         }
         
-        isPlaying = !isPlaying;
-        // Add actual playback logic here
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task TogglePlayAsync()
+    {
+        if (currentSongIndex == -1 && _room!.Playlist!.Length != 0)
+        {
+            currentSongIndex = 0;
+            await PlayCurrentSongAsync();
+        }
+        else
+        {
+            isPlaying = !isPlaying;
+            if (isPlaying)
+            {
+                await JSRuntime.InvokeVoidAsync("audioPlayer.play");                                
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("audioPlayer.pause");
+            }
+        }
     }
     
-    private void PlayNext()
+    private async Task PlayNextAsync()
     {
         if (currentSongIndex < _room!.Playlist!.Length - 1)
         {
             currentSongIndex++;
-            
-            // Add actual playback logic here
+            await PlayCurrentSongAsync();
         }
     }
-    
-    private void PlayPrevious()
+
+    private async Task PlayPreviousAsync()
     {
         if (currentSongIndex > 0)
         {
             currentSongIndex--;
-            
-            // Add actual playback logic here
+            await PlayCurrentSongAsync();
         }
+    }
+    
+    private async Task PlayCurrentSongAsync()
+    {
+        if (currentSongIndex >= 0 && currentSongIndex < _room!.Playlist!.Length)
+        {
+            isPlaying = true;
+
+            var currentSong = _room.Playlist[currentSongIndex];
+            
+            var client = HttpClientFactory.CreateClient("apiClient");
+            var fullUrl = $"{client.BaseAddress}playlistEntries/{currentSong.Id}";
+            
+            await JSRuntime.InvokeVoidAsync("audioPlayer.loadAndPlay", fullUrl);
+        }
+    }
+    
+    [JSInvokable]
+    public void OnPlaybackProgress(double? percentage)
+    {
+        progressPercentage = percentage ?? 0;
+        progressPercentageFormatted = progressPercentage.ToString("F", CultureInfo.InvariantCulture);
+        
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public async Task OnSongEnded()
+    {
+        if (currentSongIndex < _room!.Playlist!.Length - 1)
+        {
+            await PlayNextAsync();
+        }
+        else
+        {
+            isPlaying = false;
+            currentSongIndex = -1;
+            progressPercentage = 0;
+            StateHasChanged();
+        }
+    }
+    
+    public void Dispose()
+    {
+        objRef?.Dispose();
     }
 }
