@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using PartyMix.Application.PlaylistEntries.Commands.CreatePlaylistEntry;
+using PartyMix.Application.PlaylistEntries.Queries.GetPlaylistEntry;
 using PartyMix.Application.Rooms.Commands.CreateRoom;
 using PartyMix.Application.Rooms.Commands.EnterRoom;
 using PartyMix.Application.Rooms.Queries.GetRoom;
@@ -82,6 +83,16 @@ app.MapPost("/playlistEntries",
                 _ => Results.NotFound());
         })
     .WithName("CreatePlaylistEntry")
+    .WithOpenApi();
+
+app.MapGet("/playlistEntries/{id:int}", async (int id, IMediator mediator, CancellationToken cancellationToken) =>
+    {
+        var result = await mediator.Send(new GetPlaylistEntryQuery { Id = id }, cancellationToken);
+        return result.Match(
+            stream => Results.File(stream, "audio/mpeg", enableRangeProcessing: true),
+            _ => Results.NotFound());
+    })
+    .WithName("GetPlaylistEntry")
     .WithOpenApi();
 
 app.Run();
