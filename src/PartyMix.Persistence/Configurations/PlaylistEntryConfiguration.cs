@@ -15,7 +15,7 @@ internal class PlaylistEntryConfiguration: IEntityTypeConfiguration<PlaylistEntr
         builder.HasKey(x => x.Id).HasName("pk_playlist_entries");
         
         // properties options
-        builder.Property(x => x.Singer).HasMaxLength(256).IsRequired();
+        builder.Property(x => x.Artist).HasMaxLength(256).IsRequired();
         builder.Property(x => x.Song).HasMaxLength(256).IsRequired();
         
         // indexes

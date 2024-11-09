@@ -21,12 +21,17 @@ public record PlaylistEntryVm
     public int Order { get; init; }
 
     /// <summary>
-    /// Singer.
+    /// Artist.
     /// </summary>
-    public string Singer { get; init; }
+    public string Artist { get; init; }
 
     /// <summary>
     /// Song.
     /// </summary>
     public string Song { get; init; }
+
+    /// <summary>
+    /// Url.
+    /// </summary>
+    public string Url { get; init; }
 }

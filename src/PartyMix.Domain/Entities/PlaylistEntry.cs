@@ -23,15 +23,20 @@ public class PlaylistEntry
     public int Order { get; set; }
 
     /// <summary>
-    /// Singer.
+    /// Artist.
     /// </summary>
-    public string Singer { get; set; }
+    public string Artist { get; set; }
 
     /// <summary>
     /// Song.
     /// </summary>
     public string Song { get; set; }
 
+    /// <summary>
+    /// Url.
+    /// </summary>
+    public string Url { get; set; }
+    
     #endregion
 
     #region Navigation properties

@@ -12,7 +12,7 @@ public static class PlaylistEntryMapper
         {
             RoomId = Ulid.Parse(command.RoomId),
             Order = command.Order,
-            Singer = command.Singer,
+            Artist = command.Artist,
             Song = command.Song
         };
     }
@@ -24,8 +24,9 @@ public static class PlaylistEntryMapper
             Id = playlistEntry.Id,
             RoomId = playlistEntry.RoomId.ToString(),
             Order = playlistEntry.Order,
-            Singer = playlistEntry.Singer,
-            Song = playlistEntry.Song
+            Artist = playlistEntry.Artist,
+            Song = playlistEntry.Song,
+            Url = playlistEntry.Url
         };
     }
 }

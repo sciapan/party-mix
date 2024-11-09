@@ -22,9 +22,9 @@ public class CreatePlaylistEntryCommand : IRequest<OneOf<PlaylistEntryVm, NotFou
     public int Order { get; init; }
 
     /// <summary>
-    /// Singer.
+    /// Artist.
     /// </summary>
-    public string Singer { get; init; }
+    public string Artist { get; init; }
 
     /// <summary>
     /// Song.
